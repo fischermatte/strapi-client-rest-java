@@ -19,15 +19,12 @@
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-webflux</artifactId>
+            <groupId>io.projectreactor</groupId>
+            <artifactId>reactor-test</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -110,16 +107,25 @@
                 <configuration>
                     <!-- TODO use localhost openapi.json with strapi https://github.com/strapi/strapi/issues/10734 -->
                     <inputSpec>
-                        /home/georg/Development/projects/cdk-strapi-on-ecs/strapi/src/extensions/documentation/documentation/1.0.0/full_documentation.json
+                        ${project.basedir}/src/main/resources/openapi.json
                     </inputSpec>
-                    <output>${project.basedir}/generated</output>
                     <generatorName>java</generatorName>
                     <skipValidateSpec>true</skipValidateSpec>
                     <generateApiTests>false</generateApiTests>
                     <generateModelTests>false</generateModelTests>
                     <apisToGenerate>EmailTemplate</apisToGenerate>
-                    <modelsToGenerate></modelsToGenerate>
                     <lineLength>120</lineLength>
+                    <typeMappings>
+                        <typeMapping>enum=String</typeMapping>
+                        <typeMapping>datetime=Instant</typeMapping>
+                        <typeMapping>DateTime=Instant</typeMapping>
+                        <typeMapping>Date=LocalDate</typeMapping>
+                    </typeMappings>
+                    <importMappings>
+                        <importMapping>String=java.lang.String</importMapping>
+                        <importMapping>Instant=java.time.Instant</importMapping>
+                        <importMapping>LocalDate=java.time.LocalDate</importMapping>
+                    </importMappings>
                     <configOptions>
                         <sourceFolder>src/main/java</sourceFolder>
                         <library>webclient</library>
@@ -127,10 +133,12 @@
                         <modelPackage>dev.fischermatte.strapi.client.rest.model</modelPackage>
                         <!-- <async>true</async> -->
                         <!--<reactive>true</reactive> -->
-                        <dateLibrary>java8</dateLibrary>
+                        <dateLibrary>custom</dateLibrary>
+
                         <useTags>true</useTags>
                         <interfaceOnly>false</interfaceOnly>
                         <skipDefaultInterface>true</skipDefaultInterface>
+                        <jsr310>true</jsr310>
                     </configOptions>
                 </configuration>
 
